@@ -1,6 +1,6 @@
 import { createInertiaApp } from '@inertiajs/react'
 import { createRoot } from 'react-dom/client'
-import {react} from 'react';
+import {React} from 'react';
 
 createInertiaApp({
   resolve: name => {
