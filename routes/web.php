@@ -1,13 +1,20 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 
-Route::controller(AuthController::class)->group(function () {
+// authentication routes
+Route::middleware('guest')->group(function () {
     Route::get('/', [AuthController::class, 'index'])->name('home');
     Route::get('/login', [AuthController::class, 'loginPage'])->name('login');
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+});
+
+// Authenticated routes
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    });
 });

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Inertia\Inertia;
+use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\RegisterRequest;
 
 class AuthController extends Controller
 {
@@ -30,16 +31,25 @@ class AuthController extends Controller
         $user = new User($validated);
         $user->save();
 
-        return redirect()->route('home')->with('success', 'Registration successful!');
+        return redirect()->route('login')->with('success', 'Registration successful!');
     }
 
     public function login(LoginRequest $request) {
+        // retrieve validated data from the request
         $validated = $request->validated();
 
-        // Handle login logic here, e.g., authenticate the user
+        // Attempt to authenticate the user redirecting back with errors if authentication fails
+        if (!Auth::attempt($validated)) {
+            return redirect()->back()->withErrors(['username' => 'Invalid credentials.'])->withInput();
+        }
 
-        // return redirect()->route('/test')->with('success', 'Login successful!');
+        // Log in the user if they are not already logged in
+        if (!Auth::check()) {
+            $user = User::where('username', $validated['username'])->first();
+            Auth::login($user);
+        }
 
-        return redirect()->route('/')->with('success', 'Registration successful!');
+        // Redirect logged-in users to the home page
+        return redirect()->route('dashboard')->with('success', 'Login successful!');
     }
 }
