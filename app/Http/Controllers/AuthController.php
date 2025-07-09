@@ -10,22 +10,24 @@ use App\Http\Requests\RegisterRequest;
 
 class AuthController extends Controller
 {
-    public function index()
+    public function index(): \Inertia\Response
     {
-        return Inertia::render('Home', [ 
+        return Inertia::render('Home', [
             'title' => 'Home',
             'description' => 'Welcome to our website!'
         ]);
     }
 
-    public function loginPage() {
+    public function loginPage(): \Inertia\Response
+    {
         return Inertia::render('Login', [ 
             'title' => 'Login',
             'description' => 'Please login to continue.'
         ]);
     }
 
-    public function register(RegisterRequest $request) {
+    public function register(RegisterRequest $request): \Illuminate\Http\RedirectResponse
+    {
         $validated = $request->validated();
 
         $user = new User($validated);
@@ -34,7 +36,8 @@ class AuthController extends Controller
         return redirect()->route('login')->with('success', 'Registration successful!');
     }
 
-    public function login(LoginRequest $request) {
+    public function login(LoginRequest $request): \Illuminate\Http\RedirectResponse
+    {
         // retrieve validated data from the request
         $validated = $request->validated();
 

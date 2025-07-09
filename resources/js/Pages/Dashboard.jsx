@@ -1,9 +1,28 @@
 import { useState } from "react";
 import { Link, router, usePage } from "@inertiajs/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGoogle, faFacebook } from "@fortawesome/free-brands-svg-icons";
+import { useEcho } from "@laravel/echo-react";
 
 export default function Dashboard() {
+    // const { leaveChannel, leave, stopListening, listen } = useEcho(
+    //     `orders.${orderId}`,
+    //     "OrderShipmentStatusUpdated",
+    //     (e) => {
+    //         console.log(e.order);
+    //     },
+    // );
+
+    // Stop listening without leaving channel
+    // stopListening();
+
+    // Start listening again
+    // listen();
+
+    // Leave channel
+    // leaveChannel();
+
+    // Leave a channel and also its associated private and presence channels
+    // leave();
+
     const { errors } = usePage().props;
 
     const [values, setValues] = useState({

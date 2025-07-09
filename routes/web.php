@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
@@ -17,4 +18,9 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('dashboard')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     });
+
+    Route::get('/logout', function () {
+        Auth::logout();
+        return redirect()->route('home')->with('success', 'Logout successful!');
+    })->name('logout');
 });
