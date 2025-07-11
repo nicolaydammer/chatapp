@@ -9,14 +9,14 @@ export default function Home() {
         password: "",
     });
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>): void {
         setValues({
             ...values,
             [e.target.id]: e.target.value,
         });
     }
 
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault();
         router.post("/login", values);
     }
