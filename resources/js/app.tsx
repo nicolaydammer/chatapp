@@ -7,9 +7,9 @@ configureEcho({
 });
 
 createInertiaApp({
-    resolve: (name) => {
-        const pages = import.meta.glob("./Pages/**/*.jsx", { eager: true });
-        return pages[`./Pages/${name}.jsx`];
+    resolve: (name: string) => {
+        const pages = import.meta.glob("./Pages/**/*.tsx", { eager: true });
+        return pages[`./Pages/${name}.tsx`];
     },
     setup({ el, App, props }) {
         const root = createRoot(el);
