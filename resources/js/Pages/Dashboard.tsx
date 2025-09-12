@@ -1,27 +1,26 @@
 import { useState } from "react";
 import { Link, router, usePage } from "@inertiajs/react";
-import { useEcho } from "@laravel/echo-react";
+import { configureEcho, useEcho } from "@laravel/echo-react";
 
 export default function Dashboard() {
-    // const { leaveChannel, leave, stopListening, listen } = useEcho(
-    //     `orders.${orderId}`,
-    //     "OrderShipmentStatusUpdated",
-    //     (e) => {
-    //         console.log(e.order);
-    //     },
-    // );
+    const { props } = usePage();
 
-    // Stop listening without leaving channel
-    // stopListening();
+    configureEcho({
+        broadcaster: "reverb",
+        key: import.meta.env.VITE_REVERB_APP_KEY,
+        wsHost: import.meta.env.VITE_REVERB_HOST,
+        wsPort: import.meta.env.VITE_REVERB_PORT,
+        wssPort: import.meta.env.VITE_REVERB_PORT,
+        forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? "https") === "https",
+        enabledTransports: ["ws", "wss"],
+    });
 
-    // Start listening again
-    // listen();
+    let messages = [];
 
-    // Leave channel
-    // leaveChannel();
-
-    // Leave a channel and also its associated private and presence channels
-    // leave();
+    useEcho("user." + props.auth.user?.id, "MessagesBroadcast", (e) => {
+        messages = e.messages;
+        console.log(e);
+    });
 
     const { errors } = usePage().props;
 
