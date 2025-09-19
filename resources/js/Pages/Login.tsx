@@ -22,57 +22,64 @@ export default function Home() {
     }
 
     return (
-        <div>
-            <div className="bg-white dark:bg-dark dark:text-white min-h-screen py-30">
-                <div className="border rounded-[150px] mx-60 h-[70dvh]">
-                    <div className="ml-40 mt-10 flex">
-                        <p className="text-4xl hover:border-blue-500 hover:cursor-pointer border-b-3 border-dblue">
-                            <Link href="/">Don't have an account yet?</Link>
-                        </p>
-                        {/* #todo: logo */}
+        <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-3xl p-8 w-96">
+                {/* Header */}
+                <div className="flex justify-between items-start">
+                    <p className="text-gray-500 dark:text-gray-300 text-sm underline">
+                        <Link href="/">Don't have an account yet?</Link>
+                    </p>
+                    <div className="border dark:border-gray-600 rounded-lg px-3 py-2 font-bold text-xl text-gray-700 dark:text-gray-200">
+                        D
                     </div>
+                </div>
 
-                    <div className="flex flex-row justify-center mt-30">
-                        <h1 className="text-red-700 font-bold text-xl tracking-wide">
+                {/* Login form */}
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-6">
+                    <div>
+                        <h1 className="text-red-700 font-bold text-sm tracking-wide">
                             {errors && errors[Object.keys(errors)[0]]}
                         </h1>
                     </div>
-
-                    <div className="flex flex-row justify-center">
-                        <div className="flex flex-col items-end w-1/5 mr-10 mt-1">
-                            <label className="mb-4" htmlFor="username">
-                                Username:
-                            </label>
-                            <label className="mb-3" htmlFor="password">
-                                Password:
-                            </label>
-                        </div>
-
-                        <div className="flex flex-col items-start w-3/7">
-                            <form onSubmit={handleSubmit} className="w-full">
-                                <div className="flex flex-col w-7/12">
-                                    <input
-                                        className="border-b-3 border-dblue mb-3"
-                                        id="username"
-                                        type="text"
-                                        value={values.username}
-                                        onChange={handleChange}
-                                    />
-                                    <input
-                                        className="border-b-3 border-dblue mb-3"
-                                        id="password"
-                                        type="password"
-                                        value={values.password}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                                <button className="text-white ml-12 text-2xl mt-8 bg-dblue hover:cursor-pointer hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                    Login
-                                </button>
-                            </form>
-                        </div>
+                    <div>
+                        <label className="block text-sm text-gray-700 dark:text-gray-300">
+                            Username:
+                        </label>
+                        <input
+                            id="username"
+                            type="text"
+                            className="w-full border dark:border-gray-600 rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring focus:ring-indigo-400"
+                            value={values.username}
+                            onChange={handleChange}
+                        />
                     </div>
-                </div>
+                    <div>
+                        <label className="block text-sm text-gray-700 dark:text-gray-300">
+                            Password:
+                        </label>
+                        <input
+                            id="password"
+                            type="password"
+                            className="w-full border dark:border-gray-600 rounded px-3 py-2 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                            value={values.password}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    {/* Recaptcha & Login buttons */}
+                    <button
+                        type="button"
+                        className="border dark:border-gray-600 rounded-lg px-4 py-2 mt-2 w-full bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+                    >
+                        reCAPTCHA
+                    </button>
+                    <button
+                        type="submit"
+                        className="bg-indigo-500 text-white rounded-lg px-4 py-2 mt-2 w-full hover:bg-indigo-600"
+                    >
+                        Login
+                    </button>
+                </form>
             </div>
         </div>
     );

@@ -3,8 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
-use App\Models\User;
+use App\Http\Controllers\ChatController;
 
 // authentication routes
 Route::middleware('guest')->group(function () {
@@ -16,8 +15,8 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated routes
 Route::middleware(['auth'])->group(function () {
-    Route::prefix('dashboard')->group(function () {
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::prefix('chat')->group(function () {
+        Route::get('/', [ChatController::class, 'index'])->name('chat');
         Route::get('/test', function() {
             App\Events\MessagesBroadcast::dispatch(2, ['test' => 'some data']);
         });
