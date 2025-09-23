@@ -17,8 +17,8 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::prefix('chat')->group(function () {
         Route::get('/', [ChatController::class, 'index'])->name('chat');
-        Route::get('/test', function() {
-            App\Events\MessagesBroadcast::dispatch(2, ['test' => 'some data']);
+        Route::get('/{text}', function(string $text) {
+            App\Events\MessagesBroadcast::dispatch(1, ['message' => $text]);
         });
     });
 

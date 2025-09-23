@@ -22,6 +22,7 @@ class User extends Authenticatable
         'display_name',
         'email',
         'password',
+        'invite_token'
     ];
 
     /**
@@ -33,6 +34,9 @@ class User extends Authenticatable
         'username',
         'password',
         'remember_token',
+        'email_verified_at',
+        'created_at',
+        'updated_at',
     ];
 
     /**

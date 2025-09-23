@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\RegisterRequest;
@@ -31,6 +32,8 @@ class AuthController extends Controller
         $validated = $request->validated();
 
         $user = new User($validated);
+        $inviteToken = Str::uuid();
+        $user->invite_token = $inviteToken;
         $user->save();
 
         return redirect()->route('login')->with('success', 'Registration successful!');
@@ -53,6 +56,6 @@ class AuthController extends Controller
         }
 
         // Redirect logged-in users to the home page
-        return redirect()->route('dashboard')->with('success', 'Login successful!');
+        return redirect()->route('chat')->with('success', 'Login successful!');
     }
 }
