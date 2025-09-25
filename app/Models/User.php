@@ -3,9 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -50,5 +52,25 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function friendshipsInitiated(): HasMany
+    {
+        return $this->hasMany(Friend::class, 'user_id_1');
+    }
+
+    public function friendshipsReceived(): HasMany
+    {
+        return $this->HasMany(Friend::class, 'user_id_2');
+    }
+
+    public function friends(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'friends',
+            'user_id_1',
+            'user_id_2'
+        );
     }
 }

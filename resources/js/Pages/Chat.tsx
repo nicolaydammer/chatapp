@@ -6,8 +6,10 @@ import { faPlus, faMagnifyingGlass, faCopy } from "@fortawesome/free-solid-svg-i
 import ChatBox from "@/Partials/ChatBox.js";
 import ChatContact from "@/Partials/ChatContact.js";
 
-export default function Dashboard() {
+export default function Chat() {
     const { props } = usePage();
+
+    const user = props.auth.user;
 
     // let [data, setData] = useState({})
 
@@ -50,20 +52,14 @@ export default function Dashboard() {
     );
 
     const GetInviteLink = () => (
-        navigator.clipboard.writeText(`${window.location.origin}/register/${props.auth.user[0]?.invite_token}`)
+        navigator.clipboard.writeText(`${window.location.origin}/register/${props.auth.user?.invite_token}`)
     );
 
     const [showInviteDropdown, setShowInviteDropdown] = useState(false);
 
-    // Main App Component
-    const contacts = [
-        { name: "Nicolay Dammer", lastMessage: "Hey, did you get the...", active: true },
-        { name: "Jessica Smith", lastMessage: "I'll send that over...", active: false },
-        { name: "Kevin", lastMessage: "Sounds good! Talk to you later.", active: false },
-        { name: "Project Team", lastMessage: "We have a meeting tomorrow...", active: false },
-        { name: "Alex Johnson", lastMessage: "Did you see the new...", active: false }
-    ];
+    const [selectedChat, setSelectedChat] = useState(null);
 
+    // Main App Component
     return (
         <div className="flex h-screen antialiased text-gray-800 dark:text-gray-200">
             <div className="flex flex-grow w-full overflow-hidden shadow-xl">
@@ -75,13 +71,13 @@ export default function Dashboard() {
                             <span className="text-xl font-bold">Chat</span>
                             <button onClick={() => setShowInviteDropdown(!showInviteDropdown)}
                                 className="p-2 bg-indigo-500 text-white rounded-full shadow hover:bg-indigo-600 transition-colors">
-                                <Plus size={24} />
+                                <Plus />
                             </button>
                         </div>
                         <div className="relative">
                             <input type="text" placeholder="Search..." className="w-full pl-10 p-2 rounded-xl bg-gray-200 dark:bg-gray-700 border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
-                                <Search size={20} />
+                                <Search />
                             </div>
                         </div>
                     </div>
@@ -99,15 +95,19 @@ export default function Dashboard() {
                     )}
 
                     <div className="flex-1 overflow-y-auto p-4 space-y-2">
-                        {contacts.map((contact, index) => (
-                            <ChatContact key={index} {...contact} />
+                        {props.chatData.map(({ friend, messages }) => (
+                            <ChatContact
+                                key={friend.id}
+                                friend={friend}
+                                messages={messages}
+                                isActive={selectedChat?.friend.id === friend.id}
+                                onClick={() => setSelectedChat({ friend, messages })} />
                         ))}
                     </div>
                 </div>
 
                 {/* Chat View */}
-                <ChatBox />
-
+                <ChatBox chat={selectedChat} currentUser={user} />
             </div>
         </div>
     );
