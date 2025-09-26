@@ -53,7 +53,12 @@ export default function Chat() {
 
     const GetInviteLink = () => (
         navigator.clipboard.writeText(`${window.location.origin}/register/${props.auth.user?.invite_token}`)
-    );
+    ).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000)
+    });
+
+    const [copied, setCopied] = useState(false);
 
     const [showInviteDropdown, setShowInviteDropdown] = useState(false);
 
@@ -98,12 +103,17 @@ export default function Chat() {
                     {/* Dropdown Menu */}
                     {showInviteDropdown && (
                         <div className="absolute left-80 top-10 mt-2 w-60 bg-white dark:bg-gray-900 rounded-xl shadow-lg z-10">
-                            <button
+                            {!copied && <button
                                 onClick={GetInviteLink}
                                 className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                             >
                                 <span className="truncate"><Copy /> Click to copy invite link</span>
-                            </button>
+                            </button>}
+                            {copied && (
+                                <div className="gap-2 w-full p-2 rounded-lg text-green-500 font-medium">
+                                    Copied!
+                                </div>
+                            )}
                         </div>
                     )}
 
