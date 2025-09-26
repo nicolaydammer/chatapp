@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { router } from '@inertiajs/react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSmile, faEllipsisVertical, faPlus, faPaperPlane } from "@fortawesome/free-solid-svg-icons"
 
 export default function ChatBox({ chat, currentUser }) {
 
     const [showDropdown, setShowDropdown] = useState(false);
+
+    const [chatMessage, setChatMessage] = useState("");
 
     const Smile = () => (
         (<FontAwesomeIcon icon={faSmile} size="xl" />)
@@ -18,9 +21,9 @@ export default function ChatBox({ chat, currentUser }) {
         <FontAwesomeIcon icon={faPlus} size="xl" />
     );
 
-    // const Send = () => (
-    //     <FontAwesomeIcon icon={ } />
-    // );
+    const Send = () => (
+        <FontAwesomeIcon icon={faPaperPlane} />
+    );
 
     if (!chat) {
         return (
@@ -32,7 +35,22 @@ export default function ChatBox({ chat, currentUser }) {
         );
     }
 
-    const { friend, messages } = chat;
+    const friend = chat.friend
+    let messages = chat.messages;
+
+    const handleMessage = () => {
+        if (!chatMessage.trim()) return;
+
+        let data = {
+            friend_id: chat.friendShipId,
+            message: chatMessage
+        }
+
+        router.post('/chat/sendMessage', data)
+
+        // todo: add message to chat
+        setChatMessage('');
+    };
 
     return (
         <div className="flex flex-col flex-grow bg-white dark:bg-gray-800 shadow-xl overflow-hidden">
@@ -93,8 +111,27 @@ export default function ChatBox({ chat, currentUser }) {
                 <button className="text-gray-600 dark:text-gray-300">
                     <Plus />
                 </button>
-                <div className="flex-1">
-                    <input type="text" placeholder="Start typing..." className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                <div className="flex-1 relative">
+                    <input
+                        type="text"
+                        onChange={(e) => setChatMessage(e.target.value)} value={chatMessage}
+                        onKeyDown={(e) => {
+                            if (e.key == 'Enter' && chatMessage.trim()) {
+                                handleMessage();
+                            }
+                        }}
+                        placeholder="Start typing..."
+                        className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <button
+                        onClick={handleMessage}
+                        disabled={!chatMessage.trim()}
+                        className={`absolute right-4 top-1/2 -translate-y-1/2  ${chatMessage.trim()
+                            ? "text-indigo-500 hover:text-indigo-600"
+                            : "text-gray-400 cursor-not-allowed"
+                            }`}>
+                        {<Send />}
+                    </button>
                 </div>
                 <button className="text-gray-600 dark:text-gray-300">
                     <Smile />

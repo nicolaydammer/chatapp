@@ -21,6 +21,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::prefix('chat')->group(function () {
         Route::get('/', [ChatController::class, 'index'])->name('chat');
+        Route::post('/sendMessage', [ChatController::class, 'sendMessage'])->name('chatSendMessage');
         Route::get('/test', function(Request $request) {
             // App\Events\MessagesBroadcast::dispatch(1, ['message' => $text]);
 

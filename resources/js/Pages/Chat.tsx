@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, router, usePage } from "@inertiajs/react";
 import { useEcho } from "@laravel/echo-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -59,6 +59,19 @@ export default function Chat() {
 
     const [selectedChat, setSelectedChat] = useState(null);
 
+    useEffect(() => {
+        if (selectedChat) {
+            let searchForCurrentChatIndex = props.chatData.findIndex(item => item.friendShipId === selectedChat.friendShipId);
+
+            setSelectedChat({
+                friend: props.chatData[searchForCurrentChatIndex].friend,
+                friendShipId: selectedChat.friendShipId,
+                messages: props.chatData[searchForCurrentChatIndex].messages
+            });
+        }
+
+    }, [props.chatData]);
+
     // Main App Component
     return (
         <div className="flex h-screen antialiased text-gray-800 dark:text-gray-200">
@@ -95,13 +108,13 @@ export default function Chat() {
                     )}
 
                     <div className="flex-1 overflow-y-auto p-4 space-y-2">
-                        {props.chatData.map(({ friend, messages }) => (
+                        {props.chatData.map(({ friend, messages, friendShipId }) => (
                             <ChatContact
                                 key={friend.id}
                                 friend={friend}
                                 messages={messages}
                                 isActive={selectedChat?.friend.id === friend.id}
-                                onClick={() => setSelectedChat({ friend, messages })} />
+                                onClick={() => setSelectedChat({ friend, messages, friendShipId })} />
                         ))}
                     </div>
                 </div>
