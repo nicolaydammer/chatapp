@@ -54,8 +54,6 @@ export default function ChatBox({ chat, currentUser }) {
 
         if (!data.message.trim()) return;
 
-
-
         post('/chat/sendMessage', {
             preserveScroll: true,
             preserveState: true,
@@ -63,7 +61,6 @@ export default function ChatBox({ chat, currentUser }) {
             replace: false,
         });
 
-        // todo: add message to chat
         setData('message', '');
     };
 
