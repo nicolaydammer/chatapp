@@ -3,22 +3,11 @@ import { router, useForm } from '@inertiajs/react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSmile, faEllipsisVertical, faPlus, faPaperPlane } from "@fortawesome/free-solid-svg-icons"
 
-export default function ChatBox({ chat, currentUser }) {
+export default function ChatBox({ chat, currentUser, updateMessage }) {
 
     const [showDropdown, setShowDropdown] = useState(false);
 
-    const { data, setData, post } = useForm({
-        friend_id: 0,
-        message: ''
-    });
-
-    const formRef = useRef(null);
-
-    useEffect(() => {
-        if (chat) {
-            setData('friend_id', chat.friendShipId)
-        }
-    }, [chat])
+    const [message, setMessage] = useState('');
 
     const Smile = () => (
         (<FontAwesomeIcon icon={faSmile} size="xl" />)
@@ -49,19 +38,26 @@ export default function ChatBox({ chat, currentUser }) {
     const friend = chat.friend
     let messages = chat.messages;
 
-    const handleMessage = (e) => {
-        e.preventDefault();
+    const handleMessage = () => {
 
-        if (!data.message.trim()) return;
+        if (!message.trim()) return;
 
-        post('/chat/sendMessage', {
+        const data = {
+            friend_id: chat.friendShipId,
+            message: message
+        };
+
+        router.post('/chat/sendMessage', data, {
             preserveScroll: true,
             preserveState: true,
             preserveUrl: true,
             replace: false,
         });
 
-        setData('message', '');
+        // todo: throw data at it to update the chat
+        updateMessage(data);
+
+        setMessage('');
     };
 
     return (
@@ -124,29 +120,27 @@ export default function ChatBox({ chat, currentUser }) {
                     <Plus />
                 </button>
                 <div className="flex-1 relative">
-                    <form ref={formRef} onSubmit={handleMessage}>
-                        <input
-                            type="text"
-                            onChange={(e) => setData('message', e.target.value)} value={data.message}
-                            onKeyDown={(e) => {
-                                if (e.key == 'Enter' && data.message.trim()) {
-                                    e.preventDefault();
-                                    formRef.current.requestSubmit();
-                                }
-                            }}
-                            placeholder="Start typing..."
-                            className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-                        <button
-                            type="submit"
-                            disabled={!data.message.trim()}
-                            className={`absolute right-4 top-1/2 -translate-y-1/2  ${data.message.trim()
-                                ? "text-indigo-500 hover:text-indigo-600"
-                                : "text-gray-400 cursor-not-allowed"
-                                }`}>
-                            {<Send />}
-                        </button>
-                    </form>
+                    <input
+                        type="text"
+                        onChange={(e) => setMessage(e.target.value)} value={message}
+                        onKeyDown={(e) => {
+                            if (e.key == 'Enter' && message.trim()) {
+                                e.preventDefault();
+                                handleMessage();
+                            }
+                        }}
+                        placeholder="Start typing..."
+                        className="w-full p-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <button
+                        type="submit"
+                        disabled={!message.trim()}
+                        className={`absolute right-4 top-1/2 -translate-y-1/2  ${message.trim()
+                            ? "text-indigo-500 hover:text-indigo-600"
+                            : "text-gray-400 cursor-not-allowed"
+                            }`}>
+                        {<Send />}
+                    </button>
                 </div>
                 <button className="text-gray-600 dark:text-gray-300">
                     <Smile />
