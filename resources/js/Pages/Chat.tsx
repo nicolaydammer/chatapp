@@ -60,7 +60,6 @@ export default function Chat() {
 
             return oldData;
         });
-        // todo: get data in here, then process it into the chatData
     };
 
 

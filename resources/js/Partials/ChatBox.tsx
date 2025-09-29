@@ -54,7 +54,6 @@ export default function ChatBox({ chat, currentUser, updateMessage }) {
             replace: false,
         });
 
-        // todo: throw data at it to update the chat
         updateMessage(data);
 
         setMessage('');
