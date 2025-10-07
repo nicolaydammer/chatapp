@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
-use App\Models\Message;
 
 // authentication routes
 Route::middleware('guest')->group(function () {

@@ -59,6 +59,8 @@ export default function ChatSidebar(inviteToken) {
                             Copied!
                         </div>
                     )}
+
+                    {/* todo: add button for list all members to chat to */}
                 </div>
             )
         }

@@ -1,15 +1,17 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons"
 
-export default function ChatContact({ friend, messages, isActive, onClick }) {
+export default function ChatContact({ user, friend, messages, isActive, onClick }) {
 
-    let lastMessage = messages?.at(-1)?.message;
+    let lastMessage = messages?.at(-1);
 
     const activeClasses = isActive ? 'bg-indigo-500 text-white' : 'bg-transparent text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700';
 
     const UserRound = () => (
         (<FontAwesomeIcon icon={faUser} size="xl" />)
     );
+
+    console.log();
 
     return (
         <div className={`flex items-center space-x-4 p-4 rounded-xl cursor-pointer transition-colors ${activeClasses}`} onClick={onClick}>
@@ -18,7 +20,7 @@ export default function ChatContact({ friend, messages, isActive, onClick }) {
             </div>
             <div className="flex-1 overflow-hidden">
                 <p className="font-semibold text-sm truncate">{friend.display_name}</p>
-                <p className="text-xs opacity-75 truncate">{lastMessage}</p>
+                <p className="text-xs opacity-75 truncate">{lastMessage?.send_by_user_id == user.id ? 'You: ' : 'Them: '}{lastMessage?.message}</p>
             </div>
         </div>
     );
