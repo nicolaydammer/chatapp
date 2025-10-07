@@ -14,7 +14,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/', [AuthController::class, 'index'])->name('home');
     Route::get('/login', [AuthController::class, 'loginPage'])->name('login');
     Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/register/{token}', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/{invite_token}', [AuthController::class, 'index'])->whereUuid('invite_token')->name('home_token');
 });
 
 // Authenticated routes
@@ -28,7 +30,6 @@ Route::middleware(['auth'])->group(function () {
             $user = $request->user();
             $user2 = User::query()->where('username', 'nicolay2')->get()->first();
             $user3 = User::query()->where('username', 'nicolay3')->get()->first();
-
 
             return response()->json($user->messages()->get());
         });

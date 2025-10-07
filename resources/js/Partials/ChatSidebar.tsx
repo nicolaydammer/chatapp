@@ -17,7 +17,7 @@ export default function ChatSidebar(inviteToken) {
     );
 
     const GetInviteLink = () => (
-        navigator.clipboard.writeText(`${window.location.origin}/register/${inviteToken.inviteToken}`)
+        navigator.clipboard.writeText(`${window.location.origin}/${inviteToken.inviteToken}`)
     ).then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000)

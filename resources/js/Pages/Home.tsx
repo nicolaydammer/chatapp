@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle, faFacebook } from "@fortawesome/free-brands-svg-icons";
 
 export default function Home() {
-    const { errors } = usePage().props;
+    const { props } = usePage();
 
     const [values, setValues] = useState({
         username: "",
@@ -15,6 +15,8 @@ export default function Home() {
         email_confirmation: "",
     });
 
+    const invite_token = props.invite_token;
+
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         setValues({
             ...values,
@@ -24,7 +26,12 @@ export default function Home() {
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        router.post("/register", values);
+
+        if (invite_token) {
+            router.post(`/register/${invite_token}`, values);
+        } else {
+            router.post("/register", values);
+        }
     }
 
     return (
@@ -69,7 +76,7 @@ export default function Home() {
                 <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                     <div>
                         <h1 className="text-red-700 font-bold text-sm tracking-wide">
-                            {errors && errors[Object.keys(errors)[0]]}
+                            {props.errors && props.errors[Object.keys(props.errors)[0]]}
                         </h1>
                     </div>
                     <div>
