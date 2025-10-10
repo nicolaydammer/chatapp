@@ -11,8 +11,6 @@ export default function ChatContact({ user, friend, messages, isActive, onClick 
         (<FontAwesomeIcon icon={faUser} size="xl" />)
     );
 
-    console.log();
-
     return (
         <div className={`flex items-center space-x-4 p-4 rounded-xl cursor-pointer transition-colors ${activeClasses}`} onClick={onClick}>
             <div className="rounded-full w-10 h-10 bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
@@ -20,7 +18,7 @@ export default function ChatContact({ user, friend, messages, isActive, onClick 
             </div>
             <div className="flex-1 overflow-hidden">
                 <p className="font-semibold text-sm truncate">{friend.display_name}</p>
-                <p className="text-xs opacity-75 truncate">{lastMessage?.send_by_user_id == user.id ? 'You: ' : 'Them: '}{lastMessage?.message}</p>
+                <p className="text-xs opacity-75 truncate">{lastMessage && (lastMessage?.send_by_user_id == user.id ? 'You: ' : 'Them: ')}{lastMessage?.message}</p>
             </div>
         </div>
     );

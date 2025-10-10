@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMagnifyingGlass, faCopy } from "@fortawesome/free-solid-svg-icons"
+import { Link } from "@inertiajs/react";
 
 export default function ChatSidebar(inviteToken) {
 
@@ -46,7 +47,7 @@ export default function ChatSidebar(inviteToken) {
 
         {/* Dropdown Menu */}
         {
-            showInviteDropdown && (
+            showInviteDropdown && (<div>
                 <div className="absolute left-80 top-10 mt-2 w-60 bg-white dark:bg-gray-900 rounded-xl shadow-lg z-10">
                     {!copied && <button
                         onClick={GetInviteLink}
@@ -59,9 +60,9 @@ export default function ChatSidebar(inviteToken) {
                             Copied!
                         </div>
                     )}
-
-                    {/* todo: add button for list all members to chat to */}
+                    <Link className="flex items-center gap-2 w-full p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer" href="/chat/friendlist"><Search />Look for new friends!</Link>
                 </div>
+            </div>
             )
         }
     </div>

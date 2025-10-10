@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\FriendListController;
 
 // authentication routes
 Route::middleware('guest')->group(function () {
@@ -23,6 +24,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('chat')->group(function () {
         Route::get('/', [ChatController::class, 'index'])->name('chat');
         Route::post('/sendMessage', [ChatController::class, 'sendMessage'])->name('chatSendMessage');
+        Route::get('/friendlist', [FriendListController::class, 'index'])->name('chatFriendlist');
+        Route::post('/friendlist', [FriendListController::class, 'inviteNewFriend']);
         Route::get('/test', function(Request $request) {
             // App\Events\MessagesBroadcast::dispatch(1, ['message' => $text]);
 
