@@ -1,13 +1,29 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { router } from '@inertiajs/react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSmile, faEllipsisVertical, faPlus, faPaperPlane } from "@fortawesome/free-solid-svg-icons"
+import { useEcho } from "@laravel/echo-react";
 
 export default function ChatBox({ chat, currentUser, updateMessage }) {
 
     const [showDropdown, setShowDropdown] = useState(false);
 
     const [message, setMessage] = useState('');
+
+    const containerRef = useRef(null);
+
+    //websocket to receive new messages and put it in the chatdata structure
+    useEcho("user." + currentUser.id, "MessagesBroadcast", (e) => {
+        console.log('message received', e);
+        updateMessage(e);
+    });
+
+    useEffect(() => {
+        const el = containerRef.current;
+        if (el) {
+            el.scrollTop = el.scrollHeight;
+        }
+    }, [chat?.messages]);
 
     const Smile = () => (
         (<FontAwesomeIcon icon={faSmile} size="xl" />)
@@ -38,13 +54,16 @@ export default function ChatBox({ chat, currentUser, updateMessage }) {
     const friend = chat.friend
     let messages = chat.messages;
 
+
     const handleMessage = () => {
 
         if (!message.trim()) return;
 
         const data = {
+            id: null,
             friend_id: chat.friendShipId,
-            message: message
+            message: message,
+            send_by_user_id: currentUser.id
         };
 
         router.post('/chat/sendMessage', data, {
@@ -58,6 +77,8 @@ export default function ChatBox({ chat, currentUser, updateMessage }) {
 
         setMessage('');
     };
+
+
 
     return (
         <div className="flex flex-col flex-grow bg-white dark:bg-gray-800 shadow-xl overflow-hidden">
@@ -89,10 +110,9 @@ export default function ChatBox({ chat, currentUser, updateMessage }) {
             </div>
 
             {/* Chat Messages Container */}
-            <div className="flex flex-col flex-grow p-4 space-y-2 overflow-y-auto">
+            <div className="flex flex-col flex-grow p-4 space-y-2 overflow-y-auto" ref={containerRef}>
 
                 {messages.map((msg) => {
-
                     const isMe = msg.send_by_user_id === currentUser.id;
 
                     if (!isMe) {

@@ -20,7 +20,7 @@ class Message extends Model
 
     public function friendship(): BelongsTo
     {
-        return $this->belongsTo(Friend::class);
+        return $this->belongsTo(Friend::class, 'friend_id');
     }
 
     public function sender(): BelongsTo

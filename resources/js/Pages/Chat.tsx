@@ -21,47 +21,27 @@ export default function Chat() {
         setChatData(props.chatData);
     }, [props.chatData]);
 
-    // let [data, setData] = useState({})
-
-    // useEcho("user." + props.auth.user[0]?.id, "MessagesBroadcast", (e) => {
-    //     setData(e);
-    //     console.log(e);
-    // });
-
-    // const [values, setValues] = useState({
-    //     username: "",
-    //     display_name: "",
-    //     password: "",
-    //     password_confirmation: "",
-    //     email: "",
-    //     email_confirmation: "",
-    // });
-
-    // function handleChange(e) {
-    //     setValues({
-    //         ...values,
-    //         [e.target.id]: e.target.value,
-    //     });
-    // }
-
-    // function handleSubmit(e) {
-    //     e.preventDefault();
-    //     router.post("/register", values);
-    // }
-
-
     const addMessage = (newMsg) => {
         setChatData((prev) => {
-            const oldData = [...prev];
-            const index = oldData.findIndex(item => item.friendShipId === newMsg.friend_id);
-            if (index !== -1) {
-                oldData[index].messages.push({ id: null, friend_id: newMsg.friend_id, send_by_user_id: user.id, message: newMsg.message })
-            }
-
-            return oldData;
+            return prev.map((item) => {
+                if (item.friendShipId === newMsg.friend_id) {
+                    return {
+                        ...item,
+                        messages: [
+                            ...item.messages,
+                            {
+                                id: newMsg.id ?? null,
+                                friend_id: newMsg.friend_id,
+                                send_by_user_id: newMsg.send_by_user_id,
+                                message: newMsg.message,
+                            },
+                        ],
+                    };
+                }
+                return item; // unchanged
+            });
         });
     };
-
 
     useEffect(() => {
         if (selectedChat) {
@@ -73,7 +53,7 @@ export default function Chat() {
                 messages: chatData[searchForCurrentChatIndex].messages
             });
         }
-    }, [props.chatData]);
+    }, [props.chatData, chatData]);
 
     // Main App Component
     return (

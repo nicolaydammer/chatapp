@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessagesBroadcast;
 use App\Http\Requests\SendMessageRequest;
 use App\Models\Friend;
 use App\Models\Message;
@@ -34,9 +35,19 @@ class ChatController extends Controller
             'message' => $request->get('message')
         ];
 
-        Message::query()->create($data);
+        $message = Message::query()->create($data);
 
-        // todo: send a websocket to the other user
+        $friendShip = $message->friendship()->get()->first();
+
+        $sendBroadcastTo = null;
+
+        if ($friendShip->user_id_1 == $userId) {
+            $sendBroadcastTo = $friendShip->user_id_2;
+        } else {
+            $sendBroadcastTo = $friendShip->user_id_1;
+        }
+
+        MessagesBroadcast::dispatch($sendBroadcastTo, $message->toArray());
 
         return Inertia('Chat', [
             'chatData' => $this->getFriendListWithMessages($userId)
