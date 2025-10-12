@@ -4,17 +4,30 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSmile, faEllipsisVertical, faPlus, faPaperPlane } from "@fortawesome/free-solid-svg-icons"
 import { useEcho } from "@laravel/echo-react";
 
-export default function ChatBox({ chat, currentUser, updateMessage }) {
+interface ChatBoxProps {
+    chat: Friendship | null;
+    currentUser: User;
+    updateMessage: (msg: Message) => void;
+}
+
+export default function ChatBox({
+    chat,
+    currentUser,
+    updateMessage
+}: {
+    chat: Friendship | null;
+    currentUser: User;
+    updateMessage: (msg: Message) => void;
+}) {
 
     const [showDropdown, setShowDropdown] = useState(false);
 
     const [message, setMessage] = useState('');
 
-    const containerRef = useRef(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
 
     //websocket to receive new messages and put it in the chatdata structure
-    useEcho("user." + currentUser.id, "MessagesBroadcast", (e) => {
-        console.log('message received', e);
+    useEcho("user." + currentUser.id, "MessagesBroadcast", (e: Message) => {
         updateMessage(e);
     });
 
@@ -60,7 +73,7 @@ export default function ChatBox({ chat, currentUser, updateMessage }) {
         if (!message.trim()) return;
 
         const data = {
-            id: null,
+            id: 10000000,
             friend_id: chat.friendShipId,
             message: message,
             send_by_user_id: currentUser.id

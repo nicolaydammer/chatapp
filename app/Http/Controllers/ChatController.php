@@ -7,9 +7,7 @@ use App\Http\Requests\SendMessageRequest;
 use App\Models\Friend;
 use App\Models\Message;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Contracts\Database\Query\Builder as QueryBuilder;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 class ChatController extends Controller
 {

@@ -4,10 +4,14 @@ import { router } from '@inertiajs/react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"
 
+interface User {
+    display_name: string;
+    id: number;
+}
+
 export default function AddFriends() {
     const { props } = usePage();
-
-    const [allPeople, setAllPeople] = useState(props.userList);
+    const [allPeople, setAllPeople] = useState<User[]>(props.userList);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -39,7 +43,7 @@ export default function AddFriends() {
         currentPage * itemsPerPage
     );
 
-    const addFriend = (id) => {
+    const addFriend = (id: number) => {
         let data = {
             user_id: id
         }
@@ -56,7 +60,7 @@ export default function AddFriends() {
     };
 
     // Reset to page 1 when search changes
-    const handleSearch = (e) => {
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
         setCurrentPage(1);
     };
@@ -102,7 +106,7 @@ export default function AddFriends() {
                             >
                                 <div className="flex items-center space-x-3">
                                     <img
-                                        src={person.avatar}
+                                        src={null}
                                         alt={person.display_name}
                                         className="w-8 h-8 rounded-full object-cover border border-gray-700"
                                     />

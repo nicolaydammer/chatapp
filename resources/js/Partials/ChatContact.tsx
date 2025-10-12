@@ -1,7 +1,23 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons"
 
-export default function ChatContact({ user, friend, messages, isActive, onClick }) {
+export default function ChatContact({
+    user,
+    friend,
+    messages,
+    isActive,
+    onClick
+}: {
+    user: User;
+    friend: User;
+    messages: Message[];
+    isActive: boolean,
+    onClick: (chat: {
+        friend: User;
+        messages: Message[];
+        friendShipId: number;
+    }) => void
+}) {
 
     let lastMessage = messages?.at(-1);
 

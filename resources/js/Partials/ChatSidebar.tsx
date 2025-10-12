@@ -3,7 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMagnifyingGlass, faCopy } from "@fortawesome/free-solid-svg-icons"
 import { Link } from "@inertiajs/react";
 
-export default function ChatSidebar(inviteToken) {
+type inviteToken = {
+    inviteToken: string
+}
+
+export default function ChatSidebar(inviteToken: inviteToken) {
 
     const Plus = () => (
         <FontAwesomeIcon icon={faPlus} size="xl" />

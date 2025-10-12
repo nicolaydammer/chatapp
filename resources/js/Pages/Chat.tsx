@@ -7,11 +7,11 @@ import ChatSidebar from "@/Partials/ChatSidebar.js";
 export default function Chat() {
     const { props } = usePage();
 
-    const [user, setUser] = useState(props.auth.user);
+    const [user, setUser] = useState<User>(props.auth.user);
 
-    const [chatData, setChatData] = useState(props.chatData);
+    const [chatData, setChatData] = useState<FriendshipData>(props.chatData);
 
-    const [selectedChat, setSelectedChat] = useState(null);
+    const [selectedChat, setSelectedChat] = useState<Friendship | null>(null);
 
     useEffect(() => {
         setUser(props.auth.user);
@@ -21,8 +21,8 @@ export default function Chat() {
         setChatData(props.chatData);
     }, [props.chatData]);
 
-    const addMessage = (newMsg) => {
-        setChatData((prev) => {
+    const addMessage = (newMsg: Message) => {
+        setChatData((prev: FriendshipData) => {
             return prev.map((item) => {
                 if (item.friendShipId === newMsg.friend_id) {
                     return {
@@ -38,7 +38,7 @@ export default function Chat() {
                         ],
                     };
                 }
-                return item; // unchanged
+                return item;
             });
         });
     };
