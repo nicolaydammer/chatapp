@@ -40,7 +40,7 @@ class FriendListController extends Controller
 
     private function getNonFriendList(User $user): array
     {
-        $friends = $user->friends()->pluck('users.id');
+        $friends = $user->friends()->pluck('id');
 
         return User::query()->select(['id', 'display_name'])->whereNotIn('id', $friends)->whereNot('id', $user->id)->get()->toArray();
     }

@@ -30,10 +30,15 @@ Route::middleware(['auth'])->group(function () {
             // App\Events\MessagesBroadcast::dispatch(1, ['message' => $text]);
 
             $user = $request->user();
-            $user2 = User::query()->where('username', 'nicolay2')->get()->first();
-            $user3 = User::query()->where('username', 'nicolay3')->get()->first();
+$friends = $user->friends();
 
-            return response()->json($user->messages()->get());
+    $friend = $friends->where('id', 8)->first();
+
+    return $friend ? [
+        'id' => (int) $friend->id,
+        'name' => $friend->display_name
+    ] : false;
+
         });
     });
 

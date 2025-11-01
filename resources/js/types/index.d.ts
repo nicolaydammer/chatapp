@@ -5,6 +5,11 @@ interface User {
     invite_token: string;
 }
 
+interface PresenceUser {
+    id: number;
+    display_name: string;
+}
+
 interface Message {
     id: number;
     friend_id: number;

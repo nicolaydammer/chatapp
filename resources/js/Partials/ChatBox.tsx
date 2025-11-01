@@ -2,32 +2,51 @@ import { useEffect, useRef, useState } from "react";
 import { router } from '@inertiajs/react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSmile, faEllipsisVertical, faPlus, faPaperPlane } from "@fortawesome/free-solid-svg-icons"
-import { useEcho } from "@laravel/echo-react";
+import { useEcho, useEchoPresence } from "@laravel/echo-react";
 
-interface ChatBoxProps {
-    chat: Friendship | null;
-    currentUser: User;
-    updateMessage: (msg: Message) => void;
-}
+const Smile = () => (
+    (<FontAwesomeIcon icon={faSmile} size="xl" />)
+);
+
+const MoreVertical = () => (
+    <FontAwesomeIcon icon={faEllipsisVertical} size="lg" />
+);
+
+const Plus = () => (
+    <FontAwesomeIcon icon={faPlus} size="xl" />
+);
+
+const Send = () => (
+    <FontAwesomeIcon icon={faPaperPlane} />
+);
 
 export default function ChatBox({
     chat,
     currentUser,
-    updateMessage
+    updateMessage,
+    onlineUsers,
+    setOnlineUsers,
 }: {
-    chat: Friendship | null;
+    chat: Friendship;
     currentUser: User;
     updateMessage: (msg: Message) => void;
+    onlineUsers: PresenceUser[];
+    setOnlineUsers: (users: PresenceUser[]) => void;
 }) {
 
     const [showDropdown, setShowDropdown] = useState(false);
 
     const [message, setMessage] = useState('');
 
+    // presence for checking online status
+    const { channel } = useEchoPresence(`friend.${chat.friendShipId}`, [], (event) => {
+        console.log('received:' + event);
+    });
+
     const containerRef = useRef<HTMLDivElement | null>(null);
 
     //websocket to receive new messages and put it in the chatdata structure
-    useEcho("user." + currentUser.id, "MessagesBroadcast", (e: Message) => {
+    const { leaveChannel, stopListening, listen } = useEcho("user." + currentUser.id, "MessagesBroadcast", (e: Message) => {
         updateMessage(e);
     });
 
@@ -38,35 +57,30 @@ export default function ChatBox({
         }
     }, [chat?.messages]);
 
-    const Smile = () => (
-        (<FontAwesomeIcon icon={faSmile} size="xl" />)
-    );
+    useEffect(() => {
+        const presence = channel();
 
-    const MoreVertical = () => (
-        <FontAwesomeIcon icon={faEllipsisVertical} size="lg" />
-    );
+        presence.here((users: PresenceUser[]) => setOnlineUsers(users ?? []));
 
-    const Plus = () => (
-        <FontAwesomeIcon icon={faPlus} size="xl" />
-    );
+        presence.joining((user: PresenceUser) => {
+            console.log('user joined:', user);
+            setOnlineUsers((prev) => {
+                if (!Array.isArray(prev)) prev = [];
+                if (prev.some((u) => u.id === user.id)) return prev;
+                return [...prev, user];
+            })
+        });
 
-    const Send = () => (
-        <FontAwesomeIcon icon={faPaperPlane} />
-    );
+        presence.leaving((user: PresenceUser) => {
+            console.log('user left:', user);
+            setOnlineUsers(setOnlineUsers((prev) => prev.filter((u) => u.id !== user.id)));
+        });
 
-    if (!chat) {
-        return (
-            <div className="flex flex-col flex-grow bg-white dark:bg-gray-800 shadow-xl overflow-hidden">
-                {/* Header */}
-                <div className="relative flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-                </div>
-            </div>
-        );
-    }
+
+    }, [chat, channel]);
 
     const friend = chat.friend
     let messages = chat.messages;
-
 
     const handleMessage = () => {
 
@@ -101,7 +115,7 @@ export default function ChatBox({
                     <div className="flex flex-col">
                         <span className="text-sm font-semibold">{friend.display_name}</span>
                         {/* todo: online status */}
-                        {/* <span className="text-xs text-gray-500 dark:text-gray-400">Online</span> */}
+                        {onlineUsers.length > 0 && <span className="text-xs text-gray-500 dark:text-gray-400">Online</span>}
                     </div>
                 </div>
                 <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
@@ -143,6 +157,8 @@ export default function ChatBox({
                             </div>
                         </div>
                     }
+
+                    return null;
                 })}
             </div>
 

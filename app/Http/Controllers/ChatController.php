@@ -16,7 +16,7 @@ class ChatController extends Controller
         $user = $request->user();
         $userId = $user->id;
 
-        return inertia('Chat', [
+        return Inertia('Chat', [
             'chatData' => $this->getFriendListWithMessages($userId),
         ]);
     }
@@ -56,9 +56,9 @@ class ChatController extends Controller
     {
         $friendship = Friend::query()->with(['messages.sender', 'requester', 'requested'])
             ->where(function (Builder $builder) use ($userId) {
-            $builder->where('user_id_1', $userId)
-            ->orWhere('user_id_2', $userId);
-        })->get();
+                $builder->where('user_id_1', $userId)
+                    ->orWhere('user_id_2', $userId);
+            })->get();
 
         $result = $friendship->map(function ($friendship) use ($userId) {
             $friend = $friendship->user_id_1 == $userId ? $friendship->requested : $friendship->requester;

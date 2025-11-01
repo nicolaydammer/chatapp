@@ -13,6 +13,8 @@ export default function Chat() {
 
     const [selectedChat, setSelectedChat] = useState<Friendship | null>(null);
 
+    const [onlineUsersByChat, setOnlineUsersByChat] = useState<Record<number, PresenceUser[]>>({});
+
     useEffect(() => {
         setUser(props.auth.user);
     }, [props.user]);
@@ -77,8 +79,25 @@ export default function Chat() {
                     </div>
                 </div>
 
-                {/* Chat View */}
-                <ChatBox chat={selectedChat} currentUser={user} updateMessage={addMessage} />
+                {selectedChat ?
+                    <ChatBox
+                        chat={selectedChat}
+                        currentUser={user}
+                        updateMessage={addMessage}
+                        onlineUsers={onlineUsersByChat[selectedChat?.friendShipId ?? 0] ?? []}
+                        setOnlineUsers={(users: PresenceUser[]) =>
+                            setOnlineUsersByChat((prev) => ({
+                                ...prev,
+                                [selectedChat!.friendShipId]: users,
+                            }))
+                        } /> :
+                    (
+                        <div className="flex flex-col flex-grow bg-white dark:bg-gray-800 shadow-xl overflow-hidden">
+                            {/* Header */}
+                            <div className="relative flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+                            </div>
+                        </div>
+                    )}
             </div>
         </div>
     );

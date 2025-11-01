@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Collection;
 
 class User extends Authenticatable
 {
@@ -54,23 +55,21 @@ class User extends Authenticatable
         ];
     }
 
-    public function friendshipsInitiated(): HasMany
+    public function friendshipsInitiated(): BelongsToMany
     {
-        return $this->hasMany(Friend::class, 'user_id_1');
+        return $this->belongsToMany(User::class, 'friends', 'user_id_1', 'user_id_2');
     }
 
-    public function friendshipsReceived(): HasMany
+    public function friendshipsReceived(): BelongsToMany
     {
-        return $this->HasMany(Friend::class, 'user_id_2');
+        return $this->belongsToMany(User::class, 'friends', 'user_id_2', 'user_id_1');
     }
 
-    public function friends(): BelongsToMany
+    public function friends(): Collection
     {
-        return $this->belongsToMany(
-            User::class,
-            'friends',
-            'user_id_1',
-            'user_id_2'
-        );
+        $friendshipInitiated = $this->friendshipsInitiated()->get();
+        $friendshipReceived = $this->friendshipsReceived()->get();
+
+        return $friendshipInitiated->merge($friendshipReceived)->unique('id');
     }
 }
