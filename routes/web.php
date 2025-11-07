@@ -27,11 +27,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/sendMessage', [ChatController::class, 'sendMessage'])->name('chatSendMessage');
         Route::get('/friendlist', [FriendListController::class, 'index'])->name('chatFriendlist');
         Route::post('/friendlist', [FriendListController::class, 'inviteNewFriend']);
-        Route::prefix('upload')->group(function () {
+        Route::prefix('attachment')->group(function () {
             Route::post('/image', [ChatUploadController::class, 'uploadImage'])->name('chat.upload.image');
             Route::post('/video', [ChatUploadController::class, 'uploadVideo'])->name('chat.upload.video');
-            Route::post('/camera', [ChatUploadController::class, 'uploadCamera'])->name('chat.upload.camera');
             Route::post('/document', [ChatUploadController::class, 'uploadDocument'])->name('chat.upload.document');
+            Route::get('/', [ChatUploadController::class, 'getFile'])->name('chat.upload.getFile');
         });
     });
 

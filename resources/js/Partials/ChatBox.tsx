@@ -83,9 +83,9 @@ export default function ChatBox({
     }, [chat, channel]);
 
     const uploadRoutes = {
-        document: '/chat/upload/document',
-        image: '/chat/upload/image',
-        video: '/chat/upload/video',
+        document: '/chat/attachment/document',
+        image: '/chat/attachment/image',
+        video: '/chat/attachment/video',
     } as const
 
     const friend = chat.friend
@@ -113,7 +113,6 @@ export default function ChatBox({
     const sendFiles = async (file, routeKey, formData) => {
         try {
             await axiosInstance.post(uploadRoutes[routeKey], formData);
-            console.log(`${file.name} uploaded to ${routeKey}`);
         } catch (err) {
             console.error(`Failed to upload ${file.name}:`, err);
         }

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Str;
 use App\Models\Attachment;
 use Illuminate\Http\Request;
-use Str;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ChatUploadController extends Controller
 {
@@ -78,9 +80,32 @@ class ChatUploadController extends Controller
     public function getFile(Request $request)
     {
         $request->validate([
-            'path' => 'required|string|exists:attachments,path'
+            'uuid' => 'required|string|exists:attachments,uuid'
         ]);
 
-        return "";
+        $fileUUID = $request->get('uuid');
+
+        $attachment = Attachment::query()->where('uuid', $fileUUID)->firstOrFail();
+
+        // todo: authentication is this valid for this user?
+
+        $path = $attachment->path;
+
+        if (!Storage::disk('local')->exists($path)) {
+            abort(404);
+        }
+
+        $mime = Storage::disk('local')->mimeType($path);
+
+        return new StreamedResponse(function () use ($path) {
+            $stream = Storage::disk('local')->readStream($path);
+            fpassthru($stream);
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+        }, 200, [
+            'Content-Type' => $mime,
+            'Content-Disposition' => 'inline; filename="' . basename($path) . '"',
+        ]);
     }
 }
