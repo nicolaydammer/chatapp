@@ -193,15 +193,15 @@ export default function ChatBox({
 
         if (diffDays === 0) {
             // same day → show time only
-            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // e.g. 14:30
         } else if (diffDays === 1) {
-            return "Yesterday";
+            return `Yesterday ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`; // e.g. yesterday 14:30
         } else if (diffDays < 7) {
             // within a week
-            return date.toLocaleDateString([], { weekday: 'short' }); // e.g. "Mon"
+            return `${date.toLocaleDateString([], { weekday: 'short' })} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`; // e.g. "Mon 14:03"
         } else {
             // older → full date
-            return date.toLocaleDateString([], { day: '2-digit', month: 'short' }); // e.g. "03 Nov"
+            return `${date.toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' })} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`; // e.g. "03 Nov 2025 14:30"
         }
     };
 
