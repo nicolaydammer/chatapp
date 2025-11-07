@@ -12,4 +12,16 @@ export default defineConfig({
         tailwindcss(),
         react(),
     ],
+
+
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom'],
+          vendor: ['axios', '@inertiajs/react']
+        },
+      },
+    },
+  },
 });

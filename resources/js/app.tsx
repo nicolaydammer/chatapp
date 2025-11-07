@@ -16,7 +16,7 @@ configureEcho({
 createInertiaApp({
     progress: false,
     resolve: (name: string): ComponentType => {
-        const pages = import.meta.glob("./Pages/**/*.tsx", { eager: true });
+        const pages = import.meta.glob("./Pages/**/*.tsx");
         return pages[`./Pages/${name}.tsx`] as ComponentType;
     },
     setup({

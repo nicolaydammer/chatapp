@@ -53,7 +53,6 @@ export default function ChatBox({
 
     //websocket to receive new messages and put it in the chatdata structure
     const { leaveChannel, stopListening, listen } = useEcho("user." + currentUser.id, "MessagesBroadcast", (e: Message) => {
-        console.log(e)
         editMessage(e.id, e);
     });
 
