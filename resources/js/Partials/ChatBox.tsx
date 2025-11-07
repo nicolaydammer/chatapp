@@ -182,6 +182,29 @@ export default function ChatBox({
         }
     }
 
+    const formatTime = (timestamp: string | Date) => {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diffMs = now.getTime() - date.getTime();
+        const diffSec = Math.floor(diffMs / 1000);
+        const diffMin = Math.floor(diffSec / 60);
+        const diffHr = Math.floor(diffMin / 60);
+        const diffDays = Math.floor(diffHr / 24);
+
+        if (diffDays === 0) {
+            // same day → show time only
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } else if (diffDays === 1) {
+            return "Yesterday";
+        } else if (diffDays < 7) {
+            // within a week
+            return date.toLocaleDateString([], { weekday: 'short' }); // e.g. "Mon"
+        } else {
+            // older → full date
+            return date.toLocaleDateString([], { day: '2-digit', month: 'short' }); // e.g. "03 Nov"
+        }
+    };
+
     return (
         <div className="flex w-full overflow-hidden">
             <div className="flex flex-col flex-grow bg-white dark:bg-gray-800 shadow-xl overflow-hidden h-screen">
@@ -267,6 +290,9 @@ export default function ChatBox({
                                             );
                                         }
                                     })}
+                                    <p className="flex justify-end mt-2 text-[12px] text-gray-200">
+                                        {formatTime(msg.created_at)}
+                                    </p>
                                 </div>
                             </div>
                         }
@@ -322,6 +348,9 @@ export default function ChatBox({
                                             );
                                         }
                                     })}
+                                    <p className="flex justify-end mt-2 text-[12px] text-gray-200">
+                                        {formatTime(msg.created_at)}
+                                    </p>
                                 </div>
                             </div>
                         }

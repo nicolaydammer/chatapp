@@ -31,8 +31,6 @@ class ChatUploadController extends Controller
             'path' => $path,
         ]);
 
-        // todo: send this to the websocket so we can see stuff there, because only the message arrived.
-
         $message = $attachment->message()
             ->with(['attachments', 'friendship'])
             ->first();
@@ -70,6 +68,18 @@ class ChatUploadController extends Controller
             'path' => $path,
         ]);
 
+        $message = $attachment->message()
+            ->with(['attachments', 'friendship'])
+            ->first();
+
+        $friendship = $message->friendship;
+
+        $friendId = $friendship->user_id_1 == $request->user()->id
+            ? $friendship->user_id_2
+            : $friendship->user_id_1;
+
+        MessagesBroadcast::dispatch($friendId, $message->toArray());
+
         return $attachment->toArray();
     }
 
@@ -91,6 +101,18 @@ class ChatUploadController extends Controller
             'file_size' => $file->getSize(),
             'path' => $path,
         ]);
+
+        $message = $attachment->message()
+            ->with(['attachments', 'friendship'])
+            ->first();
+
+        $friendship = $message->friendship;
+
+        $friendId = $friendship->user_id_1 == $request->user()->id
+            ? $friendship->user_id_2
+            : $friendship->user_id_1;
+
+        MessagesBroadcast::dispatch($friendId, $message->toArray());
 
         return $attachment->toArray();
     }
