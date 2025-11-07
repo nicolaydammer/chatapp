@@ -23,7 +23,7 @@ class SendMessageRequest extends FormRequest
     {
         return [
             'friend_id' => 'int|required|exists:friends,id',
-            'message' => 'string|required'
+            'message' => 'string|nullable'
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Message extends Model
@@ -14,9 +15,7 @@ class Message extends Model
         'message'
     ];
 
-    protected $hidden = [
-        
-    ];
+    protected $hidden = [];
 
     public function friendship(): BelongsTo
     {
@@ -26,5 +25,10 @@ class Message extends Model
     public function sender(): BelongsTo
     {
         return $this->belongsTo(User::class, 'send_by_user_id');
+    }
+
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(Attachment::class);
     }
 }

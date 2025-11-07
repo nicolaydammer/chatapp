@@ -30,7 +30,7 @@ class ChatController extends Controller
         $data = [
             'friend_id' => $request->get('friend_id'),
             'send_by_user_id' => $userId,
-            'message' => $request->get('message')
+            'message' => $request->get('message') ?? ' '
         ];
 
         $message = Message::query()->create($data);
@@ -47,8 +47,8 @@ class ChatController extends Controller
 
         MessagesBroadcast::dispatch($sendBroadcastTo, $message->toArray());
 
-        return Inertia('Chat', [
-            'chatData' => $this->getFriendListWithMessages($userId)
+        return response()->json([
+            'message' => $message->toArray()
         ]);
     }
 

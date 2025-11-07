@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ChatUploadController;
 use App\Http\Controllers\FriendListController;
 
 // authentication routes
@@ -26,19 +27,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/sendMessage', [ChatController::class, 'sendMessage'])->name('chatSendMessage');
         Route::get('/friendlist', [FriendListController::class, 'index'])->name('chatFriendlist');
         Route::post('/friendlist', [FriendListController::class, 'inviteNewFriend']);
-        Route::get('/test', function(Request $request) {
-            // App\Events\MessagesBroadcast::dispatch(1, ['message' => $text]);
-
-            $user = $request->user();
-$friends = $user->friends();
-
-    $friend = $friends->where('id', 8)->first();
-
-    return $friend ? [
-        'id' => (int) $friend->id,
-        'name' => $friend->display_name
-    ] : false;
-
+        Route::prefix('upload')->group(function () {
+            Route::post('/image', [ChatUploadController::class, 'uploadImage'])->name('chat.upload.image');
+            Route::post('/video', [ChatUploadController::class, 'uploadVideo'])->name('chat.upload.video');
+            Route::post('/camera', [ChatUploadController::class, 'uploadCamera'])->name('chat.upload.camera');
+            Route::post('/document', [ChatUploadController::class, 'uploadDocument'])->name('chat.upload.document');
         });
     });
 

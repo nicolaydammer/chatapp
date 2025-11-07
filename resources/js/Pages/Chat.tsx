@@ -19,10 +19,6 @@ export default function Chat() {
         setUser(props.auth.user);
     }, [props.user]);
 
-    useEffect(() => {
-        setChatData(props.chatData);
-    }, [props.chatData]);
-
     const addMessage = (newMsg: Message) => {
         setChatData((prev: FriendshipData) => {
             return prev.map((item) => {
@@ -44,6 +40,22 @@ export default function Chat() {
             });
         });
     };
+
+    const editMessage = (tempId: number, message: Message) => {
+        setChatData((prev: FriendshipData) =>
+            prev.map((friendship) => {
+                if (friendship.friendShipId === message.friend_id) {
+                    return {
+                        ...friendship,
+                        messages: friendship.messages.map((msg) =>
+                            msg.id === Number(tempId) ? message : msg
+                        ),
+                    };
+                }
+                return friendship;
+            })
+        );
+    }
 
     useEffect(() => {
         if (selectedChat) {
@@ -83,14 +95,16 @@ export default function Chat() {
                     <ChatBox
                         chat={selectedChat}
                         currentUser={user}
-                        updateMessage={addMessage}
+                        addMessage={addMessage}
                         onlineUsers={onlineUsersByChat[selectedChat?.friendShipId ?? 0] ?? []}
                         setOnlineUsers={(users: PresenceUser[]) =>
                             setOnlineUsersByChat((prev) => ({
                                 ...prev,
                                 [selectedChat!.friendShipId]: users,
                             }))
-                        } /> :
+                        }
+                        editMessage={editMessage}
+                    /> :
                     (
                         <div className="flex flex-col flex-grow bg-white dark:bg-gray-800 shadow-xl overflow-hidden">
                             {/* Header */}

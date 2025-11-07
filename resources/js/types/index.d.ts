@@ -27,3 +27,5 @@ interface Friendship {
 }
 
 type FriendshipData = Friendship[];
+
+type UploadRouteKey = keyof typeof uploadRoutes;
