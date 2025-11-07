@@ -110,22 +110,14 @@ export default function ChatBox({
         return null; // unsupported type
     };
 
-    const sendFiles = async (file, routeKey, formData) => {
-        try {
-            await axiosInstance.post(uploadRoutes[routeKey], formData);
-        } catch (err) {
-            console.error(`Failed to upload ${file.name}:`, err);
-        }
-    }
-
-    const handleMessage = (files?: File[]) => {
+    const handleMessage = async (files?: File[]) => {
 
         const tempId = Date.now();
 
         let data = {
             id: tempId,
             friend_id: chat.friendShipId,
-            message: message,
+            message: message || ' ',
             send_by_user_id: currentUser.id,
         };
 
@@ -136,32 +128,57 @@ export default function ChatBox({
             setMessage('');
         }
 
-        data.message = data.message ? data.message : ' ';
+        const res = await axiosInstance.post('/chat/sendMessage', data);
+        let messageFromServer: Message = { ...res.data.message, attachment: [] }
+        const messageId = messageFromServer.id;
 
-        const res = axiosInstance.post('/chat/sendMessage', data);
+        if (files && files.length > 0) {
 
-        res.then((e) => {
-            let messageId = e.data.message.id;
-
-            editMessage(tempId, e.data.message);
-
-            if (files) {
-                for (const file of files) {
+            const uploadedFiles = await Promise.all(
+                files.map(async (file) => {
                     const routeKey = getRouteKeyForFile(file);
 
                     if (!routeKey) {
                         console.warn(`Unsupported file type: ${file.name}`);
-                        continue;
+                        return null;
                     }
 
                     const formData = new FormData();
                     formData.append('file', file);
                     formData.append('messageId', messageId);
 
-                    sendFiles(file, routeKey, formData)
-                }
+                    const fileRes = await axiosInstance.post(uploadRoutes[routeKey], formData);
+                    return fileRes.data;
+                })
+            )
+
+            messageFromServer = {
+                ...messageFromServer,
+                attachments: uploadedFiles.filter(Boolean),
             }
-        });
+        }
+
+        addMessage(messageFromServer);
+        setMessage('');
+    }
+
+    const handleDownload = async (uuid: string, filename: string) => {
+        try {
+            const res = await axiosInstance.get(`/chat/attachment/?uuid=${uuid}`, {
+                responseType: "blob",
+            });
+
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error("Download failed", err);
+        }
     }
 
     return (
@@ -203,6 +220,52 @@ export default function ChatBox({
                             return <div className="flex items-start" key={msg.id}>
                                 <div className="p-3 max-w-xs bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-2xl rounded-bl-none shadow break-words">
                                     <p>{msg.message}</p>
+                                    {msg.attachments?.map((attachment) => {
+                                        if (attachment.file_type.startsWith('image/')) {
+                                            return <div key={attachment.uuid}>
+                                                <img src={`/chat/attachment/?uuid=${attachment.uuid}`}></img>
+                                            </div>
+                                        }
+
+                                        if (attachment.file_type.startsWith('video/')) {
+                                            return <div key={attachment.uuid}>
+                                                <video controls>
+                                                    <source src={`/chat/attachment/?uuid=${attachment.uuid}`} type={`${attachment.file_type}`} />
+                                                </video>
+                                            </div>
+                                        }
+
+                                        if (allowedDocumentMimes.includes(attachment.file_type)) {
+                                            return (
+                                                <div key={attachment.uuid} className="flex items-center p-2 rounded-lg shadow-sm max-w-xs 
+                  bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
+                                                    {/* File icon */}
+                                                    <div className="flex-shrink-0 w-10 h-10 bg-gray-300 rounded flex items-center justify-center 
+                    text-gray-700 font-bold dark:bg-gray-600 dark:text-gray-200">
+                                                        📄
+                                                    </div>
+
+                                                    {/* File info */}
+                                                    <div className="ml-3 flex-1 overflow-hidden">
+                                                        <p className="text-sm font-medium text-gray-900 truncate dark:text-gray-100">{attachment.filename}</p>
+                                                        {attachment.file_size && (
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                                {(attachment.file_size / 1024).toFixed(1)} KB
+                                                            </p>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Download button */}
+                                                    <button
+                                                        onClick={() => handleDownload(attachment.uuid, attachment.filename)}
+                                                        className="ml-3 text-blue-600 hover:text-blue-800 font-semibold text-sm dark:text-blue-400 dark:hover:text-blue-300"
+                                                    >
+                                                        Download
+                                                    </button>
+                                                </div>
+                                            );
+                                        }
+                                    })}
                                 </div>
                             </div>
                         }
@@ -211,6 +274,53 @@ export default function ChatBox({
                             return <div className="flex items-start justify-end" key={msg.id}>
                                 <div className="p-3 max-w-xs bg-indigo-500 text-white rounded-2xl rounded-br-none shadow break-words">
                                     <p>{msg.message}</p>
+                                    {msg.attachments?.map((attachment) => {
+
+                                        if (attachment.file_type.startsWith('image/')) {
+                                            return <div key={attachment.uuid}>
+                                                <img src={`/chat/attachment/?uuid=${attachment.uuid}`}></img>
+                                            </div>
+                                        }
+
+                                        if (attachment.file_type.startsWith('video/')) {
+                                            return <div key={attachment.uuid}>
+                                                <video controls>
+                                                    <source src={`/chat/attachment/?uuid=${attachment.uuid}`} type={`${attachment.file_type}`} />
+                                                </video>
+                                            </div>
+                                        }
+
+                                        if (allowedDocumentMimes.includes(attachment.file_type)) {
+                                            return (
+                                                <div key={attachment.uuid} className="flex items-center p-2 rounded-lg shadow-sm max-w-xs 
+                  bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
+                                                    {/* File icon */}
+                                                    <div className="flex-shrink-0 w-10 h-10 bg-gray-300 rounded flex items-center justify-center 
+                    text-gray-700 font-bold dark:bg-gray-600 dark:text-gray-200">
+                                                        📄
+                                                    </div>
+
+                                                    {/* File info */}
+                                                    <div className="ml-3 flex-1 overflow-hidden">
+                                                        <p className="text-sm font-medium text-gray-900 truncate dark:text-gray-100">{attachment.filename}</p>
+                                                        {attachment.file_size && (
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                                {(attachment.file_size / 1024).toFixed(1)} KB
+                                                            </p>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Download button */}
+                                                    <button
+                                                        onClick={() => handleDownload(attachment.uuid, attachment.filename)}
+                                                        className="ml-3 text-blue-600 hover:text-blue-800 font-semibold text-sm dark:text-blue-400 dark:hover:text-blue-300"
+                                                    >
+                                                        Download
+                                                    </button>
+                                                </div>
+                                            );
+                                        }
+                                    })}
                                 </div>
                             </div>
                         }

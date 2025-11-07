@@ -54,7 +54,7 @@ class ChatController extends Controller
 
     public function getFriendListWithMessages(int $userId): array
     {
-        $friendship = Friend::query()->with(['messages.sender', 'requester', 'requested'])
+        $friendship = Friend::query()->with(['messages.sender', 'requester', 'requested', 'messages.attachments'])
             ->where(function (Builder $builder) use ($userId) {
                 $builder->where('user_id_1', $userId)
                     ->orWhere('user_id_2', $userId);

@@ -34,7 +34,7 @@ export default function ChatContact({
             </div>
             <div className="flex-1 overflow-hidden">
                 <p className="font-semibold text-sm truncate">{friend.display_name}</p>
-                <p className="text-xs opacity-75 truncate">{lastMessage && (lastMessage?.send_by_user_id == user.id ? 'You: ' : 'Them: ')}{lastMessage?.message}</p>
+                <p className="text-xs opacity-75 truncate">{lastMessage && (lastMessage?.send_by_user_id == user.id ? 'You: ' : 'Them: ')}{lastMessage?.message == ' ' ? 'Attachment' : lastMessage?.message}</p>
             </div>
         </div>
     );

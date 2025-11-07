@@ -28,10 +28,14 @@ export default function Chat() {
                         messages: [
                             ...item.messages,
                             {
+                                attachments: newMsg.attachments ?? null,
                                 id: newMsg.id ?? null,
                                 friend_id: newMsg.friend_id,
                                 send_by_user_id: newMsg.send_by_user_id,
                                 message: newMsg.message,
+                                created_at: newMsg.created_at ?? null,
+                                updated_at: newMsg.updated_at ?? null,
+                                sender: newMsg.sender ?? null,
                             },
                         ],
                     };

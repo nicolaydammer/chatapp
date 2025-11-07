@@ -34,6 +34,8 @@ export default function AttachmentModal(
 
                 sendMessage([file]);
             });
+
+        setWebcamPicture(undefined);
     }
 
     const handleFileChange = (e) => {
@@ -68,7 +70,7 @@ export default function AttachmentModal(
                                     </ul>
                                 )}
                                 <button
-                                    onClick={() => { sendMessage(files); setIsModalOpen(false) }}
+                                    onClick={() => { sendMessage(files); setIsModalOpen(false); setFiles([]) }}
                                     disabled={files.length === 0}
                                     className="w-full bg-blue-500 text-white p-2 rounded disabled:opacity-50"
                                 >
@@ -103,7 +105,7 @@ export default function AttachmentModal(
                                 </button>
                                 {webcamPicture && (
                                     <button
-                                        onClick={() => savePicture()}
+                                        onClick={() => { savePicture(); setIsModalOpen(false); }}
                                         className="w-full bg-green-700 p-2 rounded mt-3 text-black"
                                     >
                                         Send

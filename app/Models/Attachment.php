@@ -20,6 +20,11 @@ class Attachment extends Model
         'path',
     ];
 
+    protected $hidden = [
+        'path',
+        'message_id'
+    ];
+
     protected $casts = [
         'uuid' => 'string',
         'file_size' => 'integer',

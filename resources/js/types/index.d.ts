@@ -10,6 +10,15 @@ interface PresenceUser {
     display_name: string;
 }
 
+interface Attachment {
+    created_at: string;
+    updated_at: string;
+    file_size: number;
+    file_type: string;
+    filename: string;
+    uuid: string;
+}
+
 interface Message {
     id: number;
     friend_id: number;
@@ -18,6 +27,7 @@ interface Message {
     created_at?: string;
     updated_at?: string;
     sender?: User | number;
+    attachments: Attachment[];
 }
 
 interface Friendship {
