@@ -49,17 +49,23 @@ export default function Chat() {
         setChatData((prev: FriendshipData) =>
             prev.map((friendship) => {
                 if (friendship.friendShipId === message.friend_id) {
+                    const messageExists = friendship.messages.some(
+                        (msg) => msg.id === Number(tempId)
+                    );
+
                     return {
                         ...friendship,
-                        messages: friendship.messages.map((msg) =>
-                            msg.id === Number(tempId) ? message : msg
-                        ),
+                        messages: messageExists
+                            ? friendship.messages.map((msg) =>
+                                msg.id === Number(tempId) ? message : msg
+                            )
+                            : [...friendship.messages, message],
                     };
                 }
                 return friendship;
             })
         );
-    }
+    };
 
     useEffect(() => {
         if (selectedChat) {

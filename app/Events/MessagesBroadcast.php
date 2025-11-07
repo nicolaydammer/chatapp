@@ -1,7 +1,7 @@
 <?php
- 
+
 namespace App\Events;
- 
+
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -10,11 +10,11 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
- 
+
 class MessagesBroadcast implements ShouldBroadcast
 {
     use Dispatchable, SerializesModels, InteractsWithSockets;
- 
+
     /**
      * Create a new event instance.
      */
@@ -22,7 +22,7 @@ class MessagesBroadcast implements ShouldBroadcast
         public int $userId,
         public array $data
     ) {}
- 
+
     /**
      * Get the channels the event should broadcast on.
      *

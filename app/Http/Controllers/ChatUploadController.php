@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessagesBroadcast;
 use Str;
 use App\Models\Attachment;
+use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -28,6 +30,22 @@ class ChatUploadController extends Controller
             'file_size' => $file->getSize(),
             'path' => $path,
         ]);
+
+        // todo: send this to the websocket so we can see stuff there, because only the message arrived.
+
+        $message = $attachment->message()
+            ->with(['attachments', 'friendship'])
+            ->first();
+
+        // Now you have everything:
+        $friendship = $message->friendship;
+
+        // Figure out the other user
+        $friendId = $friendship->user_id_1 == $request->user()->id
+            ? $friendship->user_id_2
+            : $friendship->user_id_1;
+
+        MessagesBroadcast::dispatch($friendId, $message->toArray());
 
         return $attachment->toArray();
     }

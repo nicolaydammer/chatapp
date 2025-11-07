@@ -22,7 +22,6 @@ class Attachment extends Model
 
     protected $hidden = [
         'path',
-        'message_id'
     ];
 
     protected $casts = [
