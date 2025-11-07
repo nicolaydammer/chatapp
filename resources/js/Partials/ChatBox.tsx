@@ -117,6 +117,7 @@ export default function ChatBox({
             friend_id: chat.friendShipId,
             message: message || ' ',
             send_by_user_id: currentUser.id,
+            attachments: []
         };
 
         if (!files) {
@@ -239,7 +240,7 @@ export default function ChatBox({
 
                         if (!isMe) {
                             return <div className="flex items-start" key={msg.id}>
-                                <div className="p-3 max-w-xs bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-2xl rounded-bl-none shadow break-words">
+                                <div className="p-3 max-w-md bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-2xl rounded-bl-none shadow break-words">
                                     <p>{msg.message}</p>
                                     {msg.attachments?.map((attachment) => {
                                         if (attachment.file_type.startsWith('image/')) {
@@ -296,7 +297,7 @@ export default function ChatBox({
 
                         if (isMe) {
                             return <div className="flex items-start justify-end" key={msg.id}>
-                                <div className="p-3 max-w-xs bg-indigo-500 text-white rounded-2xl rounded-br-none shadow break-words">
+                                <div className="p-3 max-w-md bg-indigo-500 text-white rounded-2xl rounded-br-none shadow break-words">
                                     <p>{msg.message}</p>
                                     {msg.attachments?.map((attachment) => {
 
