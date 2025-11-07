@@ -1,9 +1,7 @@
-import { act, useEffect, useRef, useState } from "react";
-import { router } from '@inertiajs/react'
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSmile, faEllipsisVertical, faPlus, faPaperPlane } from "@fortawesome/free-solid-svg-icons"
 import { useEcho, useEchoPresence } from "@laravel/echo-react";
-
 import AttachmentModal from "@/Modals/AttachmentModal.js";
 import axiosInstance from "@/lib/axios.js";
 

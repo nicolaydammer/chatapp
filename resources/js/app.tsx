@@ -1,7 +1,7 @@
 import { createInertiaApp } from "@inertiajs/react";
 import { createRoot } from "react-dom/client";
 import { configureEcho } from "@laravel/echo-react";
-import { ComponentType } from "react";
+import { ComponentType, lazy } from "react";
 
 configureEcho({
     broadcaster: "reverb",
@@ -17,7 +17,7 @@ createInertiaApp({
     progress: false,
     resolve: (name: string): ComponentType => {
         const pages = import.meta.glob("./Pages/**/*.tsx");
-        return pages[`./Pages/${name}.tsx`] as ComponentType;
+        return lazy(() => pages[`./Pages/${name}.tsx`]() as ComponentType);
     },
     setup({
         el,
